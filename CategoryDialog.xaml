@@ -1,0 +1,42 @@
+<Window x:Class="LabelMeWpf.CategoryDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="选择标注类别" Width="390" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="#20242B" Foreground="White" ShowInTaskbar="False">
+  <Grid Margin="18">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <TextBlock Grid.Row="0" Text="从已有类别中选择" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,7" />
+    <ListBox Grid.Row="1" x:Name="ExistingLabelCombo" Height="110"
+             Background="#111419" Foreground="White" BorderBrush="#596371" FontWeight="SemiBold">
+      <ListBox.ItemContainerStyle>
+        <Style TargetType="ListBoxItem">
+          <Setter Property="Background" Value="#111419" />
+          <Setter Property="Foreground" Value="White" />
+          <Setter Property="Padding" Value="7,5" />
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+          <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter Property="Background" Value="#1769AA" />
+              <Setter Property="Foreground" Value="White" />
+            </Trigger>
+          </Style.Triggers>
+        </Style>
+      </ListBox.ItemContainerStyle>
+    </ListBox>
+    <TextBlock Grid.Row="2" Text="或者输入新类别（填写后优先使用）" Foreground="#C8D0DB" Margin="0,14,0,7" />
+    <TextBox Grid.Row="3" x:Name="NewLabelTextBox" Height="34" Padding="7,4"
+             Background="White" Foreground="#111827" CaretBrush="#111827" />
+    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+      <Button Content="取消" Width="82" IsCancel="True" />
+      <Button Content="确定" Width="82" Background="#1769AA" IsDefault="True" Click="Confirm_Click" />
+    </StackPanel>
+  </Grid>
+</Window>

@@ -1,0 +1,19 @@
+<Application x:Class="LabelMeWpf.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+  <Application.Resources>
+    <SolidColorBrush x:Key="PanelBrush" Color="#20242B" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#4EA1FF" />
+    <Style TargetType="Button">
+      <Setter Property="Padding" Value="12,7" />
+      <Setter Property="Margin" Value="3" />
+      <Setter Property="Background" Value="#343B45" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="BorderBrush" Value="#4A5360" />
+    </Style>
+    <Style TargetType="TextBlock">
+      <Setter Property="Foreground" Value="#E8EBEF" />
+    </Style>
+  </Application.Resources>
+</Application>

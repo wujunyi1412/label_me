@@ -1,0 +1,34 @@
+# .NET build outputs
+[Bb]in/
+[Oo]bj/
+artifacts/
+[Dd]ist/
+TestResults/
+*.nupkg
+*.snupkg
+
+# CMake generated files
+[Bb]uild/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+
+# Visual Studio / IDE settings
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.idea/
+
+# Runtime and temporary files
+.labelme-wpf-progress.json
+*.tmp
+*.bak
+*.log
+
+# Windows system files
+Thumbs.db
+Desktop.ini
