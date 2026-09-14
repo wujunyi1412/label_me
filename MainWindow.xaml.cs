@@ -17,6 +17,7 @@ public partial class MainWindow : Window
 {
     private static readonly string[] ImageExtensions = [".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff"];
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true, PropertyNameCaseInsensitive = true };
+    private const double PolygonSnapDistancePixels = 8;
     private readonly ObservableCollection<AnnotationShape> _shapes = [];
     private readonly List<string> _imagePaths = [];
     private readonly HashSet<string> _duplicateAnnotationStems = new(StringComparer.OrdinalIgnoreCase);
@@ -568,7 +569,7 @@ public partial class MainWindow : Window
         var point = ClampPoint(e.GetPosition(DrawingCanvas));
         if (_drawing)
         {
-            if (_draftPoints.Count >= 3 && IsNear(point, _draftPoints[0], 14))
+            if (_draftPoints.Count >= 3 && IsNear(point, _draftPoints[0], PolygonSnapDistancePixels))
             {
                 FinishDrawing();
                 e.Handled = true;
@@ -627,7 +628,9 @@ public partial class MainWindow : Window
         var point = ClampPoint(e.GetPosition(DrawingCanvas));
         if (_drawing)
         {
-            var preview = _draftPoints.Count >= 3 && IsNear(point, _draftPoints[0], 14) ? _draftPoints[0] : point;
+            var preview = _draftPoints.Count >= 3 && IsNear(point, _draftPoints[0], PolygonSnapDistancePixels)
+                ? _draftPoints[0]
+                : point;
             RenderShapes(preview);
         }
         if (_drawingRectangle && _rectangleStart.HasValue)
@@ -915,6 +918,27 @@ public partial class MainWindow : Window
         ImageScale.ScaleX = ImageScale.ScaleY = e.NewValue;
         if (ZoomText != null) ZoomText.Text = $"{e.NewValue:P0}";
         if (DrawingCanvas != null) RenderShapes();
+    }
+
+    private void ImageScroll_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if ((Keyboard.Modifiers & ModifierKeys.Control) == 0 || MainImage.Source == null) return;
+
+        var oldZoom = ZoomSlider.Value;
+        var wheelSteps = e.Delta / 120.0;
+        var newZoom = Math.Clamp(oldZoom * Math.Pow(1.12, wheelSteps), ZoomSlider.Minimum, ZoomSlider.Maximum);
+        if (Math.Abs(newZoom - oldZoom) < 0.0001) { e.Handled = true; return; }
+
+        var cursor = e.GetPosition(ImageScroll);
+        var oldHorizontalOffset = ImageScroll.HorizontalOffset;
+        var oldVerticalOffset = ImageScroll.VerticalOffset;
+        ZoomSlider.Value = newZoom;
+        ImageScroll.UpdateLayout();
+
+        var ratio = newZoom / oldZoom;
+        ImageScroll.ScrollToHorizontalOffset((oldHorizontalOffset + cursor.X) * ratio - cursor.X);
+        ImageScroll.ScrollToVerticalOffset((oldVerticalOffset + cursor.Y) * ratio - cursor.Y);
+        e.Handled = true;
     }
 
     private void FitImage()
