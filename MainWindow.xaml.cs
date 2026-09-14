@@ -520,9 +520,9 @@ public partial class MainWindow : Window
         DrawingCanvas.Cursor = Cursors.Cross;
     }
 
-    private string? ChooseLabel()
+    private string? ChooseLabel(string? currentLabel = null)
     {
-        var dialog = new CategoryDialog(_state.Labels, LabelCombo.SelectedItem as string) { Owner = this };
+        var dialog = new CategoryDialog(_state.Labels, currentLabel ?? LabelCombo.SelectedItem as string) { Owner = this };
         if (dialog.ShowDialog() != true || string.IsNullOrWhiteSpace(dialog.SelectedLabel)) return null;
         return AddLabelIfMissing(dialog.SelectedLabel);
     }
@@ -656,6 +656,27 @@ public partial class MainWindow : Window
     {
         if (_drawing) { FinishDrawing(); e.Handled = true; }
         else if (_drawingRectangle) { CancelDrawing(); e.Handled = true; }
+        else
+        {
+            var point = ClampPoint(e.GetPosition(DrawingCanvas));
+            var shapeIndex = HitTestShape(point);
+            if (shapeIndex < 0) return;
+
+            ShapeList.SelectedIndex = shapeIndex;
+            ShapeList.ScrollIntoView(ShapeList.SelectedItem);
+
+            var editItem = new MenuItem { Header = "修改类别…" };
+            editItem.Click += (_, _) => EditSelectedShapeLabel();
+            var deleteItem = new MenuItem { Header = "删除标注" };
+            deleteItem.Click += (_, _) => DeleteSelectedShape(true);
+            var menu = new ContextMenu
+            {
+                PlacementTarget = DrawingCanvas,
+                Items = { editItem, new Separator(), deleteItem }
+            };
+            menu.IsOpen = true;
+            e.Handled = true;
+        }
     }
 
     private bool IsNear(Point a, Point b, double screenPixels)
@@ -737,7 +758,7 @@ public partial class MainWindow : Window
         {
             Points = new PointCollection(closed ? list.Append(list[0]) : list),
             Stroke = new SolidColorBrush(color), StrokeThickness = (selected ? 4 : 2) / ImageScale.ScaleX,
-            Fill = closed ? new SolidColorBrush(Color.FromArgb((byte)(selected ? 75 : 35), color.R, color.G, color.B)) : Brushes.Transparent,
+            Fill = Brushes.Transparent,
             IsHitTestVisible = false
         };
         DrawingCanvas.Children.Add(polygon);
@@ -900,9 +921,34 @@ public partial class MainWindow : Window
 
     private void DeleteShape_Click(object sender, RoutedEventArgs e)
     {
+        DeleteSelectedShape(false);
+    }
+
+    private void EditSelectedShapeLabel()
+    {
         var index = ShapeList.SelectedIndex;
         if (index < 0) return;
-        _shapes.RemoveAt(index); _dirty = true; RenderShapes();
+        var label = ChooseLabel(_shapes[index].Label);
+        if (label == null || label == _shapes[index].Label) return;
+        _shapes[index].Label = label;
+        _dirty = true;
+        ShapeList.Items.Refresh();
+        ShapeList.SelectedIndex = index;
+        RenderShapes();
+        StatusText.Text = $"已将选中标注的类别修改为“{label}”";
+    }
+
+    private void DeleteSelectedShape(bool confirm)
+    {
+        var index = ShapeList.SelectedIndex;
+        if (index < 0) return;
+        if (confirm && MessageBox.Show(this, $"确定删除“{_shapes[index].Label}”标注？", "删除标注",
+                MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+            return;
+        _shapes.RemoveAt(index);
+        _dirty = true;
+        RenderShapes();
+        StatusText.Text = "已删除选中标注（尚未保存）";
     }
 
     private void ClearShapes_Click(object sender, RoutedEventArgs e)
