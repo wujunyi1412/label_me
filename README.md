@@ -2,8 +2,6 @@
 
 一个使用 WPF / C# 编写的本地图片多边形标注工具，无需 OpenCV。
 
-应用图标源文件位于 `Assets\labelme-icon.png`，Windows 多尺寸图标位于 `Assets\labelme-icon.ico`。
-
 ![demo](demo.jpg)
 
 ## 使用 BAT 编译
