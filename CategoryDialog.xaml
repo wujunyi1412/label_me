@@ -14,7 +14,7 @@
     </Grid.RowDefinitions>
 
     <TextBlock Grid.Row="0" Text="从已有类别中选择" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,7" />
-    <ListBox Grid.Row="1" x:Name="ExistingLabelCombo" Height="110"
+    <ListBox Grid.Row="1" x:Name="ExistingLabelCombo" Height="110" MouseDoubleClick="ExistingLabelCombo_MouseDoubleClick"
              Background="#111419" Foreground="White" BorderBrush="#596371" FontWeight="SemiBold">
       <ListBox.ItemContainerStyle>
         <Style TargetType="ListBoxItem">

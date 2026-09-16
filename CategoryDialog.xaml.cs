@@ -30,4 +30,12 @@ public partial class CategoryDialog : Window
         }
         DialogResult = true;
     }
+
+    private void ExistingLabelCombo_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (ExistingLabelCombo.SelectedItem == null) return;
+        NewLabelTextBox.Clear();
+        Confirm_Click(sender, e);
+        e.Handled = true;
+    }
 }

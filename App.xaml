@@ -15,5 +15,26 @@
     <Style TargetType="TextBlock">
       <Setter Property="Foreground" Value="#E8EBEF" />
     </Style>
+    <Style TargetType="ContextMenu">
+      <Setter Property="Background" Value="#20242B" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="BorderBrush" Value="#596371" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Padding" Value="2" />
+    </Style>
+    <Style TargetType="MenuItem">
+      <Setter Property="Background" Value="#20242B" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="Padding" Value="12,7" />
+      <Style.Triggers>
+        <Trigger Property="IsHighlighted" Value="True">
+          <Setter Property="Background" Value="#1769AA" />
+          <Setter Property="Foreground" Value="White" />
+        </Trigger>
+        <Trigger Property="IsEnabled" Value="False">
+          <Setter Property="Foreground" Value="#7E8794" />
+        </Trigger>
+      </Style.Triggers>
+    </Style>
   </Application.Resources>
 </Application>
